@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Original code throughout this project was written by Nick Gal (https://github.com/nickgal)
+// Original source was forked from https://github.com/LanternEQ/LanternExtractor on 2024/04/19
+// Changes after that point performed by Nathan Handley (https://github.com/NathanHandley)
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
