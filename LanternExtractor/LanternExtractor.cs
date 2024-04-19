@@ -19,12 +19,12 @@ namespace LanternExtractor
         private static ILogger _logger;
         // Switch to true to use multiple processes for processing
         private static bool _useMultiProcess = false;
-
         // Batch jobs n at a time
         private static int _processCount = 4;
-        private static void Main(string[] args)
+
+        private static void ProcessRequest(List<string> args)
         {
-            if (args.Length > 0 && args[0] == "PROCESS_JOB")
+            if (args.Count > 0 && args[0] == "PROCESS_JOB")
             {
                 var zoneFiles = args.Skip(1).ToArray();
                 var scrubbedZoneFiles = zoneFiles.Select(s => Regex.Match(s, "(\\w+)(?:\\.s3d)$").ToString()).ToArray();
@@ -42,19 +42,12 @@ namespace LanternExtractor
                 return;
             }
 
-
             _logger = new TextFileLogger("log.txt");
             _settings = new Settings("settings.txt", _logger);
             _settings.Initialize();
             _logger.SetVerbosity((LogVerbosity)_settings.LoggerVerbosity);
 
             DateTime start = DateTime.Now;
-
-            if (args.Length != 1)
-            {
-                Console.WriteLine("Usage: lantern.exe <filename/shortname/all>");
-                return;
-            }
 
             var archiveName = args[0];
             List<string> eqFiles = EqFileHelper.GetValidEqFilePaths(_settings.EverQuestDirectory, archiveName);
@@ -92,11 +85,34 @@ namespace LanternExtractor
                     ArchiveExtractor.Extract(file, "Exports/", _logger, _settings);
                 }
             }
-            
+
             ClientDataCopier.Copy(archiveName, "Exports/", _logger, _settings);
             MusicCopier.Copy(archiveName, _logger, _settings);
 
             Console.WriteLine($"Extraction complete ({(DateTime.Now - start).TotalSeconds:.00}s)");
+        }
+
+        private static void Main(string[] args)
+        {
+            string enteredCommand = string.Empty;
+            if (args.Length == 0)
+            {
+                Console.WriteLine("========= Everquest Content Extractor =========");
+                Console.WriteLine("(Note, can execute by command line.  Usage: lantern.exe <filename/shortname/all>)");
+                Console.WriteLine("");
+                Console.WriteLine("Enter Command (filename/shortname/all): ");
+                enteredCommand = Console.ReadLine();
+            }
+
+            List<string> arguements = new List<string>();
+            if (enteredCommand != string.Empty)
+                arguements.Add(enteredCommand);
+            foreach (string arg in args)
+                arguements.Add(arg);
+
+            ProcessRequest(arguements);
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }
     }
 }
