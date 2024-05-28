@@ -1,4 +1,4 @@
-﻿// Original code throughout this project was written by Nick Gal (https://github.com/nickgal)
+﻿// Original code throughout this project was written by Dan Wilkins / Nick Gal and possibly others
 // Original source was forked from https://github.com/LanternEQ/LanternExtractor on 2024/04/19
 // Changes after that point performed by Nathan Handley (https://github.com/NathanHandley)
 
